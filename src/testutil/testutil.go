@@ -1,3 +1,8 @@
+// The testutil package provides an assertion framework for unit testing.
+// The package assumes these are executed in the context of gotest, and the first parameter of
+// each method is the *testing.T parameter of the test method. If any assertion fails, the assertion
+// calls t.Fatalf(), logs the message, and terminates the test method.
+//
 package testutil
 
 import (
@@ -32,7 +37,11 @@ func assertFuncName(baseOnly bool) string {
 }
 
 // Assert a value is nil.
-// If fail, report Fatal
+// The method takes the *testing.T from the test method, the value to be asserted as nil,
+// and a message printed if the assertion fails. The "format" and "a" variadic parameters conform
+// the the fmt.Fatalf() method.
+//
+// If the assertion fails, t.Fatalf() is called terminating the test script.
 func AssertNil(t *testing.T, v interface{}, format string, a...interface{}) {
 	var valid bool = true // False if nil, true of not-nil (valid)
 	vVal := reflect.ValueOf(v)
@@ -53,7 +62,11 @@ func AssertNil(t *testing.T, v interface{}, format string, a...interface{}) {
 }
 
 // Assert a value is NOT nil.
-// If fail, report Fatal
+// The method takes the *testing.T from the test method, the value to be asserted as NOT nil,
+// and a message printed if the assertion fails. The "format" and "a" variadic parameters conform
+// the the fmt.Fatalf() method.
+//
+// If the assertion fails, t.Fatalf() is called terminating the test script.
 func AssertNotNil(t *testing.T, v interface{}, format string, a...interface{}) {
 	var valid bool = false
 	vVal := reflect.ValueOf(v)
@@ -73,19 +86,36 @@ func AssertNotNil(t *testing.T, v interface{}, format string, a...interface{}) {
 	}
 }
 
+// Assert a value evaluates to true
+// The method takes the *testing.T from the test method, the value to be asserted,
+// and a message printed if the assertion fails. The "format" and "a" variadic parameters conform
+// the the fmt.Fatalf() method.
+//
+// If the assertion fails, t.Fatalf() is called terminating the test script.
 func AssertTrue(t *testing.T, b bool, format string, a...interface{}) {
 	if !b {
 		logFatal(t, assertFuncName(true) + " failed. " + format, a)
 	}
 }
 
+// Assert a value evaluates to false
+// The method takes the *testing.T from the test method, the value to be asserted,
+// and a message printed if the assertion fails. The "format" and "a" variadic parameters conform
+// the the fmt.Fatalf() method.
+//
+// If the assertion fails, t.Fatalf() is called terminating the test script.
 func AssertFalse(t *testing.T, b bool, format string, a...interface{}) {
 	if b {
 		logFatal(t, assertFuncName(true) + " failed. " + format, a)
 	}
 }
 
-// Assert parameter is an empty string
+// Assert a string value is equal to the empty string ("").
+// The method takes the *testing.T from the test method, the value to be asserted,
+// and a message printed if the assertion fails. The "format" and "a" variadic parameters conform
+// the the fmt.Fatalf() method.
+//
+// If the assertion fails, t.Fatalf() is called terminating the test script.
 func AssertEmptyString(t *testing.T, v string, format string, a...interface{}) {
 	vVal := reflect.ValueOf(v)
 	if vVal.Kind() == reflect.Ptr {
@@ -96,7 +126,12 @@ func AssertEmptyString(t *testing.T, v string, format string, a...interface{}) {
 	}
 }
 
-// Assert parameter is NOT an empty string
+// Assert a string value is NOT equal to the empty string.
+// The method takes the *testing.T from the test method, the value to be asserted,
+// and a message printed if the assertion fails. The "format" and "a" variadic parameters conform
+// the the fmt.Fatalf() method.
+//
+// If the assertion fails, t.Fatalf() is called terminating the test script.
 func AssertNotEmptyString(t *testing.T, v string, format string, a...interface{}) {
 	vVal := reflect.ValueOf(v)
 	if vVal.Kind() == reflect.Ptr {
@@ -107,21 +142,36 @@ func AssertNotEmptyString(t *testing.T, v string, format string, a...interface{}
 	}
 }
 
-// Assert two strinsg are equal
+// Assert two strings are equivalent, i.e. have the string characters/runes.
+// The method takes the *testing.T from the test method, the two strings to be asserted,
+// and a message printed if the assertion fails. The "format" and "a" variadic parameters conform
+// the the fmt.Fatalf() method.
+//
+// If the assertion fails, t.Fatalf() is called terminating the test script.
 func AssertStringsEqual(t *testing.T, v1 string, v2 string, format string, a...interface{}) {
 	if v1 != v2 {
 		logFatal(t, assertFuncName(true) + " failed. " + format, a)
 	}
 }
 
-// Assert two strinsg are NOT requal
+// Assert two strinsg are NOT equivalent, i.e. the string values are not the same.
+// The method takes the *testing.T from the test method, the value to be asserted,
+// and a message printed if the assertion fails. The "format" and "a" variadic parameters conform
+// the the fmt.Fatalf() method.
+//
+// If the assertion fails, t.Fatalf() is called terminating the test script.
 func AssertStringsNotEqual(t *testing.T, v1 string, v2 string, format string, a...interface{}) {
 	if v1 == v2 {
 		logFatal(t, assertFuncName(true) + " failed. " + format, a)
 	}
 }
 
-// Test if value1 == value2
+// Assert that two values are equal.
+// The method takes the *testing.T from the test method, the values to be asserted,
+// and a message printed if the assertion fails. The "format" and "a" variadic parameters conform
+// the the fmt.Fatalf() method.
+//
+// If the assertion fails, t.Fatalf() is called terminating the test script.
 func AssertEqual(t *testing.T, v1 interface{}, v2 interface{}, format string, a...interface{}) {
 	var eq = false
 	switch v1.(type) {
@@ -141,7 +191,12 @@ func AssertEqual(t *testing.T, v1 interface{}, v2 interface{}, format string, a.
 	}
 }
 
-// Test if value1 > value2
+// Assert the first value (v1) is numerically greater than the second value (v2).
+// The method takes the *testing.T from the test method, the values to be asserted,
+// and a message printed if the assertion fails. The "format" and "a" variadic parameters conform
+// the the fmt.Fatalf() method.
+//
+// If the assertion fails, t.Fatalf() is called terminating the test script.
 func AssertGreaterThan(t *testing.T, v1 interface{}, v2 interface{}, format string, a...interface{}) {
 	var gt bool
 	switch v1.(type) {
@@ -157,7 +212,12 @@ func AssertGreaterThan(t *testing.T, v1 interface{}, v2 interface{}, format stri
 	}
 }
 
-// Test if value1 >= valuel2
+// Assert the first value (v1) is greater-than-or-equal-to the second value (v2)
+// The method takes the *testing.T from the test method, the value to be asserted,
+// and a message printed if the assertion fails. The "format" and "a" variadic parameters conform
+// the the fmt.Fatalf() method.
+//
+// If the assertion fails, t.Fatalf() is called terminating the test script.
 func AssertGreaterThanOrEqual(t *testing.T, v1 interface{}, v2 interface{}, format string, a...interface{}) {
 	var gte bool
 	switch v1.(type) {
@@ -173,7 +233,12 @@ func AssertGreaterThanOrEqual(t *testing.T, v1 interface{}, v2 interface{}, form
 	}
 }
 
-// Test if numerically value1 is < value2
+// Assert the first value (v1) is less-than the second value (v2)
+// The method takes the *testing.T from the test method, the value to be asserted,
+// and a message printed if the assertion fails. The "format" and "a" variadic parameters conform
+// the the fmt.Fatalf() method.
+//
+// If the assertion fails, t.Fatalf() is called terminating the test script.
 func AssertLessThan(t *testing.T, v1 interface{}, v2 interface{}, format string, a...interface{}) {
 	var lt bool
 	switch v1.(type) {
@@ -189,7 +254,12 @@ func AssertLessThan(t *testing.T, v1 interface{}, v2 interface{}, format string,
 	}
 }
 
-// Test if value1 <= value2
+// Assert the first value (v1) is less-than-or-equal-to the second value (v2)
+// The method takes the *testing.T from the test method, the value to be asserted,
+// and a message printed if the assertion fails. The "format" and "a" variadic parameters conform
+// the the fmt.Fatalf() method.
+//
+// If the assertion fails, t.Fatalf() is called terminating the test script.
 func AssertLessThanOrEqual(t *testing.T, v1 interface{}, v2 interface{}, format string, a...interface{}) {
 	var lte bool
 	switch v1.(type) {
@@ -205,19 +275,36 @@ func AssertLessThanOrEqual(t *testing.T, v1 interface{}, v2 interface{}, format 
 	}
 }
 
+// Assert the a function that accepts a parameter (v) returns true.
+// The method takes the *testing.T from the test method, the value to be asserted,
+// and a message printed if the assertion fails. The "format" and "a" variadic parameters conform
+// the the fmt.Fatalf() method.
+//
+// If the assertion fails, t.Fatalf() is called terminating the test script.
 func AssertTrueFunc(t *testing.T, v interface{}, f func(x interface{}) bool, format string, a...interface{}) {
 	if !f(v) {
 		logFatal(t, assertFuncName(true) + " failed. " + format, a)
 	}
 }
 
+// Assert the a function that accepts a parameter (v) returns false.
+// The method takes the *testing.T from the test method, the value to be asserted,
+// and a message printed if the assertion fails. The "format" and "a" variadic parameters conform
+// the the fmt.Fatalf() method.
+//
+// If the assertion fails, t.Fatalf() is called terminating the test script.
 func AssertFalseFunc(t *testing.T, v interface{}, f func(x interface{}) bool, format string, a...interface{}) {
 	if f(v) {
 		logFatal(t, assertFuncName(true) + " failed. " + format, a)
 	}
 }
 
-// Search a map of files for a particular string (text).
+// Assert a given string is found in a list of files provided as a map[int]string.
+// The method takes the *testing.T from the test method, the value to be asserted,
+// and a message printed if the assertion fails. The "format" and "a" variadic parameters conform
+// the the fmt.Fatalf() method.
+//
+// If the assertion fails, t.Fatalf() is called terminating the test script.
 func AssertTextInFiles(t *testing.T, fileMap map[int]string, needle string) (found bool) {
 	found = scanFiles(fileMap, needle)
 	if !found {
@@ -227,7 +314,12 @@ func AssertTextInFiles(t *testing.T, fileMap map[int]string, needle string) (fou
 	return
 }
 
-// Search a map of files for a particular string (text) is NOT in the file(s)
+// Assert a given string is NOT found in a list of files provided as a map[int]string.
+// The method takes the *testing.T from the test method, the value to be asserted,
+// and a message printed if the assertion fails. The "format" and "a" variadic parameters conform
+// the the fmt.Fatalf() method.
+//
+// If the assertion fails, t.Fatalf() is called terminating the test script.
 func AssertTextNotInFiles(t *testing.T, fileMap map[int]string, needle string) (found bool) {
 	found = scanFiles(fileMap, needle)
 	if found {
