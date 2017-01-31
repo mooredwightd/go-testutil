@@ -37,7 +37,7 @@ func assertFuncName(baseOnly bool) string {
 }
 
 // Assert a value is nil.
-// The method takes the t paramteer from the test method, the value to be asserted as nil,
+// The method takes the t paramteter from the test method, the value to be asserted as nil,
 // and a message printed if the assertion fails. The format and the a variadic parameters conform
 // the the fmt.Fatalf() method.
 //
@@ -62,7 +62,7 @@ func AssertNil(t *testing.T, v interface{}, format string, a...interface{}) {
 }
 
 // Assert a value is NOT nil.
-// The method takes the t paramteer from the test method, the value to be asserted as NOT nil,
+// The method takes the t paramteter from the test method, the value to be asserted as NOT nil,
 // and a message printed if the assertion fails. The format and the a variadic parameters conform
 // the the fmt.Fatalf() method.
 //
@@ -87,7 +87,7 @@ func AssertNotNil(t *testing.T, v interface{}, format string, a...interface{}) {
 }
 
 // Assert a value evaluates to true
-// The method takes the t paramteer  from the test method, the value to be asserted,
+// The method takes the t parameter  from the test method, the value to be asserted,
 // and a message printed if the assertion fails. The format and the a variadic parameters conform
 // the the fmt.Fatalf() method.
 //
@@ -99,7 +99,7 @@ func AssertTrue(t *testing.T, b bool, format string, a...interface{}) {
 }
 
 // Assert a value evaluates to false
-// The method takes the *t paramteer  from the test method, the value to be asserted,
+// The method takes the *t parameter  from the test method, the value to be asserted,
 // and a message printed if the assertion fails. The format and the a variadic parameters conform
 // the the fmt.Fatalf() method.
 //
@@ -111,7 +111,7 @@ func AssertFalse(t *testing.T, b bool, format string, a...interface{}) {
 }
 
 // Assert a string value is equal to the empty string ("").
-// The method takes the t paramteer  from the test method, the value to be asserted,
+// The method takes the t parameter  from the test method, the value to be asserted,
 // and a message printed if the assertion fails. The format and the a variadic parameters conform
 // the the fmt.Fatalf() method.
 //
@@ -127,7 +127,7 @@ func AssertEmptyString(t *testing.T, v string, format string, a...interface{}) {
 }
 
 // Assert a string value is NOT equal to the empty string.
-// The method takes the *t paramteer  from the test method, the value to be asserted,
+// The method takes the *t parameter  from the test method, the value to be asserted,
 // and a message printed if the assertion fails. The format and the a variadic parameters conform
 // the the fmt.Fatalf() method.
 //
@@ -143,7 +143,7 @@ func AssertNotEmptyString(t *testing.T, v string, format string, a...interface{}
 }
 
 // Assert two strings are equivalent, i.e. have the string characters/runes.
-// The method takes the *t paramteer  from the test method, the two strings to be asserted,
+// The method takes the *t parameter  from the test method, the two strings to be asserted,
 // and a message printed if the assertion fails. The format and the a variadic parameters conform
 // the the fmt.Fatalf() method.
 //
@@ -155,7 +155,7 @@ func AssertStringsEqual(t *testing.T, v1 string, v2 string, format string, a...i
 }
 
 // Assert two strinsg are NOT equivalent, i.e. the string values are not the same.
-// The method takes the *t paramteer  from the test method, the value to be asserted,
+// The method takes the *t parameter  from the test method, the value to be asserted,
 // and a message printed if the assertion fails. The format and the a variadic parameters conform
 // the the fmt.Fatalf() method.
 //
@@ -167,7 +167,7 @@ func AssertStringsNotEqual(t *testing.T, v1 string, v2 string, format string, a.
 }
 
 // Assert that two values are equal.
-// The method takes the t paramteer  from the test method, the values to be asserted,
+// The method takes the t parameter  from the test method, the values to be asserted,
 // and a message printed if the assertion fails. The format and the a variadic parameters conform
 // the the fmt.Fatalf() method.
 //
@@ -192,7 +192,7 @@ func AssertEqual(t *testing.T, v1 interface{}, v2 interface{}, format string, a.
 }
 
 // Assert the first value (v1) is numerically greater than the second value (v2).
-// The method takes the t paramteer  from the test method, the values to be asserted,
+// The method takes the t parameter  from the test method, the values to be asserted,
 // and a message printed if the assertion fails. The format and the a variadic parameters conform
 // the the fmt.Fatalf() method.
 //
@@ -213,7 +213,7 @@ func AssertGreaterThan(t *testing.T, v1 interface{}, v2 interface{}, format stri
 }
 
 // Assert the first value (v1) is greater-than-or-equal-to the second value (v2)
-// The method takes the t paramteer  from the test method, the value to be asserted,
+// The method takes the t parameter  from the test method, the value to be asserted,
 // and a message printed if the assertion fails. The format and the a variadic parameters conform
 // the the fmt.Fatalf() method.
 //
@@ -234,7 +234,7 @@ func AssertGreaterThanOrEqual(t *testing.T, v1 interface{}, v2 interface{}, form
 }
 
 // Assert the first value (v1) is less-than the second value (v2)
-// The method takes the t paramteer  from the test method, the value to be asserted,
+// The method takes the t parameter  from the test method, the value to be asserted,
 // and a message printed if the assertion fails. The format and the a variadic parameters conform
 // the the fmt.Fatalf() method.
 //
@@ -255,7 +255,7 @@ func AssertLessThan(t *testing.T, v1 interface{}, v2 interface{}, format string,
 }
 
 // Assert the first value (v1) is less-than-or-equal-to the second value (v2)
-// The method takes the *t paramteer  from the test method, the value to be asserted,
+// The method takes the *t parameter  from the test method, the value to be asserted,
 // and a message printed if the assertion fails. The format and the a variadic parameters conform
 // the the fmt.Fatalf() method.
 //
@@ -276,7 +276,7 @@ func AssertLessThanOrEqual(t *testing.T, v1 interface{}, v2 interface{}, format 
 }
 
 // Assert the a function that accepts a parameter (v) returns true.
-// The method takes the t paramteer  from the test method, the value to be asserted,
+// The method takes the t parameter  from the test method, the value to be asserted,
 // and a message printed if the assertion fails. The format and the a variadic parameters conform
 // the the fmt.Fatalf() method.
 //
@@ -288,7 +288,7 @@ func AssertTrueFunc(t *testing.T, v interface{}, f func(x interface{}) bool, for
 }
 
 // Assert the a function that accepts a parameter (v) returns false.
-// The method takes the t paramteer  from the test method, the value to be asserted,
+// The method takes the t parameter  from the test method, the value to be asserted,
 // and a message printed if the assertion fails. The format and the a variadic parameters conform
 // the the fmt.Fatalf() method.
 //
@@ -300,7 +300,7 @@ func AssertFalseFunc(t *testing.T, v interface{}, f func(x interface{}) bool, fo
 }
 
 // Assert a given string is found in a list of files provided as a map[int]string.
-// The method takes the t paramteer  from the test method, the value to be asserted,
+// The method takes the t parameter  from the test method, the value to be asserted,
 // and a message printed if the assertion fails. The format and the a variadic parameters conform
 // the the fmt.Fatalf() method.
 //
@@ -315,7 +315,7 @@ func AssertTextInFiles(t *testing.T, fileMap map[int]string, needle string) (fou
 }
 
 // Assert a given string is NOT found in a list of files provided as a map[int]string.
-// The method takes the t paramteer  from the test method, the value to be asserted,
+// The method takes the t parameter  from the test method, the value to be asserted,
 // and a message printed if the assertion fails. The format and the a variadic parameters conform
 // the the fmt.Fatalf() method.
 //
