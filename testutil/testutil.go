@@ -12,8 +12,7 @@ import (
 	"strings"
 	"testing"
 	"runtime"
-	"fmt"
-)
+a)
 
 // Print a fatal message.
 func logFatal(t *testing.T, format string, a []interface{}) {
