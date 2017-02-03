@@ -12,6 +12,7 @@ import (
 	"strings"
 	"testing"
 	"runtime"
+	"fmt"
 )
 
 // Print a fatal message.
@@ -169,11 +170,12 @@ func AssertStringsNotEqual(t *testing.T, v1 string, v2 string, format string, a.
 // Assert that two values are equal.
 // The method takes the t parameter  from the test method, the values to be asserted,
 // and a message printed if the assertion fails. The format and the a variadic parameters conform
-// the the fmt.Fatalf() method.
+// the the fmt.Fatalf() method. Assumes each of v1 and v2 are typed values (not constants)
 //
 // If the assertion fails, t.Fatalf() is called terminating the test script.
 func AssertEqual(t *testing.T, v1 interface{}, v2 interface{}, format string, a...interface{}) {
 	var eq = false
+
 	switch v1.(type) {
 	case bool:
 		eq = reflect.ValueOf(v1).Bool() == reflect.ValueOf(v2).Bool()
