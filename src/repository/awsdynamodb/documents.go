@@ -6,6 +6,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/pkg/errors"
 	"repository"
+	"reflect"
 )
 
 // Query
@@ -160,7 +161,6 @@ func getAttributeDefinitionByTag(v interface{}, tagName string, targetValue stri
 	var pos int = 0
 	var fieldName *string
 
-	// Find the "key-type" tag.
 	for pos = 0; pos >= 0 && (tagValue == nil || *tagValue != targetValue); pos++ {
 		fieldName, tagValue, pos = repository.GetFieldByTagName(v, tagName, pos)
 		if pos < 0 {
@@ -177,12 +177,13 @@ func getAttributeDefinitionByTag(v interface{}, tagName string, targetValue stri
 	// Look for a tag indicating the field data type.
 	fieldType := repository.GetTagByFieldName(v, *fieldName, "aws-type")
 	if fieldType == nil {
-		x := goTypeToAwsType(v, *fieldName)
+		// Tag "aws-type" was not found, thus we make an intelligent guess.
+		// This will only return a type S or N, or nil
+		field, _ := reflect.TypeOf(v).FieldByName(*fieldName)
+		x := mapToAwsType(field.Type)
 		return &dynamodb.AttributeDefinition{AttributeName:fieldName, AttributeType: aws.String(x)}
 	}
 
-	// Tag "aws-type" was not found, thus we make an intelligent guess.
-	// This will only return a type S or N, or nil
 	return &dynamodb.AttributeDefinition{AttributeName:fieldName, AttributeType: fieldType}
 }
 

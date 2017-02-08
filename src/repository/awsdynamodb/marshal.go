@@ -89,16 +89,6 @@ func GetAttributeValue(doc interface{}, fieldName string) (av *dynamodb.Attribut
 		if !fieldVal.IsValid() {
 			return nil
 		}
-	case reflect.Array, reflect.Slice:
-		ndx, err := strconv.Atoi(fieldName)
-		if err != nil {
-			return nil
-		}
-		fV := reflect.ValueOf(doc)
-		if ndx < 0 || ndx >= fV.Len() {
-			return nil
-		}
-		fieldVal = reflect.ValueOf(doc).Index(ndx)
 	default:
 		return nil
 	}
@@ -169,6 +159,11 @@ func MarshalAWS(doc interface{}) (avMap map[string]*dynamodb.AttributeValue) {
 func UnmarshalAWS(doc interface{}, attrBuf map[string]*dynamodb.AttributeValue) (interface{}) {
 	var docVal reflect.Value
 
+	krt := getInterface(doc, unmarshalerType)
+	if krt != nil {
+		return krt.(AwsUnmarshaler).UnmarshalAWS(attrBuf)
+	}
+
 	// Create a new "document"
 	dType := reflect.TypeOf(doc)
 	if dType.Kind() == reflect.Ptr {
@@ -206,7 +201,6 @@ func UnmarshalAWS(doc interface{}, attrBuf map[string]*dynamodb.AttributeValue) 
 	case reflect.Map:
 		docVal = reflect.MakeMap(dType)
 		for k, mapItem := range attrBuf {
-			fmt.Printf("...key %v\n", k)
 			if v, mErr := marshalToGoValue(mapItem, dType.Elem()); mErr == nil {
 				docVal.SetMapIndex(reflect.ValueOf(k), v)
 			} else {
@@ -326,8 +320,7 @@ var nSize = map[reflect.Kind]int{
 // For Maps, this will only converts keys of type string, or numeric
 func marshalToGoValue(av *dynamodb.AttributeValue, varType reflect.Type) (reflect.Value, error) {
 	zValue := reflect.Zero(varType)
-	valuePtr := reflect.New(varType)
-	value := valuePtr.Elem()
+	value := reflect.New(varType).Elem()
 
 	switch k := varType.Kind(); {
 	case k == reflect.Interface && av.S != nil: fallthrough
@@ -339,32 +332,13 @@ func marshalToGoValue(av *dynamodb.AttributeValue, varType reflect.Type) (reflec
 		value.Set(reflect.ValueOf(*av.BOOL))
 
 	case k == reflect.Uint, k == reflect.Uint8, k == reflect.Uint16, k == reflect.Uint32, k == reflect.Uint64:
-		n, err := strconv.ParseUint(*av.N, 0, nSize[varType.Kind()])
-		if err != nil {
-			return zValue, err
-		}
-		value.SetUint(n)
-
+		fallthrough
 	case k == reflect.Int, k == reflect.Int8, k == reflect.Int16, k == reflect.Int32, k == reflect.Int64:
-		n, err := strconv.ParseInt(*av.N, 0, nSize[varType.Kind()])
-		if err != nil {
-			fmt.Printf("Uint converstion error for %s", *av.N)
-			return zValue, err
-		}
-		value.SetInt(n)
-
-	// The variable/field is interface{}, and doesn't have a specific number type, so we'll assume float
-	case k == reflect.Interface && av.N != nil: fallthrough
+		fallthrough
+	case k == reflect.Interface && av.N != nil:
+		fallthrough
 	case k == reflect.Float32, k == reflect.Float64:
-		n, err := strconv.ParseFloat(*av.N, nSize[varType.Kind()])
-		if err != nil {
-			return zValue, err
-		}
-		if k == reflect.Interface {
-			value.Set(reflect.ValueOf(n))
-		} else {
-			value.SetFloat(n)
-		}
+		value = awsToNumericValue(av, varType)
 
 	case k == reflect.Interface && len(av.M) > 0: fallthrough
 	case k == reflect.Map:
@@ -412,51 +386,10 @@ func marshalToGoValue(av *dynamodb.AttributeValue, varType reflect.Type) (reflec
 		case len(av.NS) > 0:
 			sLen := len(av.NS)
 			value = reflect.MakeSlice(reflect.SliceOf(itemType), sLen, sLen)
-
-			switch itemType.Kind() {
-			case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-				for i := 0; i < sLen; i++ {
-					x, cErr := strconv.ParseUint(*av.NS[i], 0, nSize[itemType.Kind()])
-					if cErr == nil {
-						return zValue, fmt.Errorf("Error converting NS array: %v", av.NS)
-					}
-					if itemType.Kind() == reflect.Interface {
-						value.Index(i).Set(reflect.ValueOf(x))
-					} else {
-						value.Index(i).SetUint(x)
-					}
-				}
-
-			case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-				for i := 0; i < sLen; i++ {
-					x, cErr := strconv.ParseInt(*av.NS[i], 0, nSize[itemType.Kind()])
-					if cErr != nil {
-						return zValue, fmt.Errorf("Error converting NS array: %v", av.NS)
-					}
-					if itemType.Kind() == reflect.Interface {
-						value.Index(i).Set(reflect.ValueOf(x))
-					} else {
-						value.Index(i).SetInt(x)
-					}
-				}
-
-			case reflect.Interface: fallthrough
-			case reflect.Float32, reflect.Float64:
-				for i := 0; i < sLen; i++ {
-					x, cErr := strconv.ParseFloat(*av.NS[i], nSize[itemType.Kind()])
-					if cErr != nil {
-						return zValue, fmt.Errorf("Error converting NS array: %v", av.NS)
-					}
-					if itemType.Kind() == reflect.Interface {
-						value.Index(i).Set(reflect.ValueOf(x))
-					} else {
-						value.Index(i).SetFloat(x)
-					}
-				}
+			for i := 0; i < sLen; i++ {
+				x := awsToNumericValue(&dynamodb.AttributeValue{N:av.NS[i]}, itemType)
+				value.Index(i).Set(x)
 			}
-
-		case len(av.BS) > 0:
-			return zValue, fmt.Errorf("Not yet implemented for AWS type %s.", "B or BS")
 		case len(av.L) > 0:
 			sLen := len(av.L)
 			value = reflect.MakeSlice(reflect.SliceOf(itemType), sLen, sLen)
@@ -467,17 +400,21 @@ func marshalToGoValue(av *dynamodb.AttributeValue, varType reflect.Type) (reflec
 				}
 				value.Index(i).Set(x)
 			}
+		case len(av.BS) > 0:
+			return zValue, fmt.Errorf("Not yet implemented for AWS type %s.", "B or BS")
+
 		}
 	}
 
 	return value, nil
 }
 
+// Convert a *dynamodb.AttributeValue.N to a Go reflection Value
 func awsToNumericValue(av *dynamodb.AttributeValue, t reflect.Type) reflect.Value {
 	zValue := reflect.Zero(t)
 	value := reflect.New(t).Elem()
 
-	switch  k := t.Kind(){
+	switch  k := t.Kind(); {
 	case k == reflect.Uint, k == reflect.Uint8, k == reflect.Uint16, k == reflect.Uint32, k == reflect.Uint64:
 		n, err := strconv.ParseUint(*av.N, 0, nSize[k])
 		if err != nil {
@@ -509,7 +446,7 @@ func awsToNumericValue(av *dynamodb.AttributeValue, t reflect.Type) reflect.Valu
 	return value
 }
 
-// Convert a M (map) key in an AttributeValue to the appropriate Go map key data type
+// Convert a M (map) key in an AttributeValue to the appropriate Go map key data type via reflection Value.
 // This currently only works with strings or numbers due to AWS data is transferred via JSON.
 func convertKey(key string, keyType reflect.Type) (reflect.Value, error) {
 	zValue := reflect.Zero(keyType)
@@ -525,26 +462,12 @@ func convertKey(key string, keyType reflect.Type) (reflect.Value, error) {
 	case reflect.Float32, reflect.Float64:
 		keyV, kErr = marshalToGoValue(&dynamodb.AttributeValue{N: aws.String(key)}, keyType)
 	default:
-		return zValue, fmt.Errorf("Cannnot convert map key to type %v.", keyType)
+		kErr = fmt.Errorf("Cannnot convert map key to type %v.", keyType)
 	}
 	if kErr != nil {
 		return zValue, fmt.Errorf("Error converting map key to type %v.", keyType)
 	}
 	return keyV, nil
-}
-
-// Evalutes the field in a struct, and returns the AWs type based on the Go type
-func goTypeToAwsType(v interface{}, fieldName string) string {
-	dType := reflect.TypeOf(v)
-	if dType.Kind() == reflect.Ptr {
-		dType = dType.Elem()
-	}
-	field, ok := dType.FieldByName(fieldName)
-	if !ok {
-		return ""
-	}
-	x := mapToAwsType(field.Type)
-	return x
 }
 
 // Based on the data type, returns the equivalent AWS type.

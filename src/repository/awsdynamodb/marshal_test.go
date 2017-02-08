@@ -188,6 +188,7 @@ func TestUnmarshalAWS(t *testing.T) {
 			"Expected %s to match. %+v", "DocName", docX)
 		testutil.AssertEqual(t, docX.FValue, float32(2.2), "Expected %s to match. %+v", "FValue", docX)
 		testutil.AssertEqual(t, docX.IValue, 1, "Expected %s to match. %+v", "IValue", docX)
+		t.Logf("UnmarshallAWS() Scalar=1 returned %+v", docX)
 	})
 
 	t.Run("Slice=1", func(t *testing.T) {
@@ -201,7 +202,7 @@ func TestUnmarshalAWS(t *testing.T) {
 		testutil.AssertNotNil(t, docX, "Expected valid %v", "sliceStruct1")
 		testutil.AssertEqual(t, len(docX.AnArray), len(jData["AnArray"].SS),
 			"Expected %s length match. %+v\n", "AnArray", docX)
-		t.Logf("Slice=1 returned %+v", docX)
+		t.Logf("UnmarshallAWS() Slice=1 returned %+v", docX)
 	})
 
 	t.Run("Slice=2", func(t *testing.T) {
@@ -215,7 +216,7 @@ func TestUnmarshalAWS(t *testing.T) {
 		testutil.AssertNotNil(t, docX, "Expected valid %v", "sliceStruct2")
 		testutil.AssertEqual(t, len(docX.AnArray), len(jData["AnArray"].NS),
 			"Expected %s length match. %+v\n", "AnArray", docX)
-		t.Logf("Slice=2 returned %+v", docX)
+		t.Logf("UnmarshallAWS() Slice=2 returned %+v", docX)
 	})
 	t.Run("Slice=3", func(t *testing.T) {
 		var a sliceStruct3
@@ -228,7 +229,7 @@ func TestUnmarshalAWS(t *testing.T) {
 		testutil.AssertNotNil(t, docX, "Expected valid %v", "sliceStruct3")
 		testutil.AssertEqual(t, len(docX.AnArray), len(jData["AnArray"].NS),
 			"Expected %s length match. %+v\n", "AnArray", docX)
-		t.Logf("Slice=3 returned %+v", docX)
+		t.Logf("UnmarshallAWS() Slice=3 returned %+v", docX)
 	})
 	t.Run("Slice=4", func(t *testing.T) {
 		var a sliceStruct4
@@ -242,7 +243,7 @@ func TestUnmarshalAWS(t *testing.T) {
 		testutil.AssertNotNil(t, docX, "Expected valid %v", "sliceStruct4")
 		testutil.AssertEqual(t, len(docX.AnArray), len(jData["AnArray"].L),
 			"Expected %s length match. %+v\n", "AnArray", docX)
-		t.Logf("Slice=4 returned %+v", docX)
+		t.Logf("UnmarshallAWS() Slice=4 returned %+v", docX)
 	})
 	t.Run("Slice=5", func(t *testing.T) {
 		var a sliceStruct5
@@ -256,7 +257,7 @@ func TestUnmarshalAWS(t *testing.T) {
 		testutil.AssertNotNil(t, docX, "Expected valid %v", "sliceStruct5")
 		testutil.AssertEqual(t, len(docX.AnArray), len(jData["AnArray"].L),
 			"Expected %s length match. %+v\n", "AnArray", docX)
-		t.Logf("Slice=5 returned %+v", docX)
+		t.Logf("UnmarshallAWS() Slice=5 returned %+v", docX)
 	})
 	t.Run("Slice=6", func(t *testing.T) {
 		var a sliceStruct6
@@ -273,7 +274,7 @@ func TestUnmarshalAWS(t *testing.T) {
 		testutil.AssertNotNil(t, docX, "Expected valid %v", "sliceStruct6")
 		testutil.AssertEqual(t, len(docX.AnArray), len(jData["AnArray"].L),
 			"Expected %s length match. %+v\n", "AnArray", docX)
-		t.Logf("Slice=6 returned %+v", docX)
+		t.Logf("UnmarshallAWS() Slice=6 returned %+v", docX)
 	})
 	t.Run("Slice=7", func(t *testing.T) {
 		var a struct1
@@ -291,7 +292,7 @@ func TestUnmarshalAWS(t *testing.T) {
 		testutil.AssertNotNil(t, docX, "Expected valid %v", "struct1")
 		testutil.AssertEqual(t, len(docX.AnArray), len(jData["AnArray"].L),
 			"Expected %s length match. %+v\n", "AnArray", docX)
-		t.Logf("Slice=7 returned %+v", docX)
+		t.Logf("UnmarshallAWS() Slice=7 returned %+v", docX)
 	})
 	t.Run("Map=1", func(t *testing.T) {
 		var a map1
@@ -307,7 +308,7 @@ func TestUnmarshalAWS(t *testing.T) {
 		testutil.AssertNotNil(t, docX, "Expected valid %v", "map1")
 		testutil.AssertEqual(t, len(docX.AMap), len(jData["AMap"].M),
 			"Expected %s length match. %+v\n", "AMap", docX)
-		t.Logf("Map=1 returned %+v", docX)
+		t.Logf("UnmarshallAWS() Map=1 returned %+v", docX)
 	})
 	t.Run("Map=2", func(t *testing.T) {
 		var a map2
@@ -323,7 +324,7 @@ func TestUnmarshalAWS(t *testing.T) {
 		testutil.AssertNotNil(t, docX, "Expected valid %v", "map2")
 		testutil.AssertEqual(t, len(docX.AMap), len(jData["AMap"].M),
 			"Expected %s length match. %+v\n", "AMap", docX)
-		t.Logf("Map=2 returned %+v", docX)
+		t.Logf("UnmarshallAWS() Map=2 returned %+v", docX)
 	})
 	t.Run("Map=3", func(t *testing.T) {
 		var a map3
@@ -339,7 +340,7 @@ func TestUnmarshalAWS(t *testing.T) {
 		testutil.AssertNotNil(t, docX, "Expected valid %v", "map3")
 		testutil.AssertEqual(t, len(docX.AMap), len(jData["AMap"].M),
 			"Expected %s length match. %+v\n", "AMap", docX)
-		t.Logf("Map=3 returned %+v", docX)
+		t.Logf("UnmarshallAWS() Map=3 returned %+v", docX)
 	})
 	t.Run("Map=4", func(t *testing.T) {
 		var a map4
@@ -356,7 +357,7 @@ func TestUnmarshalAWS(t *testing.T) {
 		testutil.AssertEqual(t, len(docX.AMap), len(jData["AMap"].M),
 			"Expected %s length match. %+v\n", "AMap", docX)
 		testutil.AssertStringsEqual(t, "Map=4", docX.DocName, "Expected key/value DocName to match. Actual:%+v\n", docX)
-		t.Logf("Map=4 returned %+v", docX)
+		t.Logf("UnmarshallAWS() Map=4 returned %+v", docX)
 	})
 	t.Run("Map=5", func(t *testing.T) {
 		var a TestMarshalMap
@@ -381,6 +382,6 @@ func TestUnmarshalAWS(t *testing.T) {
 		x := UnmarshalAWS(a, jData).(reflect.Value)
 		docX := x.Interface().(TestMarshalMap)
 		testutil.AssertNotNil(t, docX, "Expected valid %v", "TestMarshalMap")
-		t.Logf("Map=5 returned %+v", docX)
+		t.Logf("UnmarshallAWS() Map=5 returned %+v", docX)
 	})
 }
