@@ -3,7 +3,7 @@
 // each method is the *testing.T parameter of the test method. If any assertion fails, the assertion
 // calls t.Fatalf(), logs the message, and terminates the test method.
 //
-package testutil
+package gotestutil
 
 import (
 	"io/ioutil"
